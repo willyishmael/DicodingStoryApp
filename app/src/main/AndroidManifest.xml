@@ -10,7 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DicodingStoryApp">
         <activity
-            android:name=".MainActivity"
+            android:name=".view.register.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.createstory.CreateStoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.login.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
