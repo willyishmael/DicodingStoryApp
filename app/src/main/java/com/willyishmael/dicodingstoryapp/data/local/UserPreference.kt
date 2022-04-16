@@ -2,12 +2,25 @@ package com.willyishmael.dicodingstoryapp.data.local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>){
+
+    fun getLoginState(): Flow<Boolean> {
+        return dataStore.data.map { pref ->
+            pref[LOGIN_STATE_KEY] ?: false
+        }
+    }
+
+    suspend fun setLoginState(state: Boolean) {
+        dataStore.edit { pref ->
+            pref[LOGIN_STATE_KEY] = state
+        }
+    }
 
     fun getCurrentUserToken(): Flow<String> {
         return dataStore.data.map { pref ->
@@ -34,6 +47,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
     }
 
     companion object {
+        private val LOGIN_STATE_KEY = booleanPreferencesKey("login_state")
         private val USER_TOKEN_KEY = stringPreferencesKey("user_token")
         private val USER_NAME_KEY = stringPreferencesKey("user_name")
 
