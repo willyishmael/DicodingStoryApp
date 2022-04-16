@@ -12,8 +12,6 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import com.willyishmael.dicodingstoryapp.data.remote.response.Response as ApiResponse
-
 
 class LoginViewModel(private val pref: UserPreference) : ViewModel() {
 
@@ -35,12 +33,12 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
                         pref.saveUserName(loginResult?.name.toString())
                     }
                 } else {
-                    TODO("Not yet implemented")
+                    Log.e(TAG, "Login - onResponse: ${response.body()?.message}")
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.e(TAG, "Login - onFailure: ${t.message.toString()}")
             }
 
         })
