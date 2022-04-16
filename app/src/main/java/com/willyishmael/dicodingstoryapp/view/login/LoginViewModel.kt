@@ -17,36 +17,6 @@ import com.willyishmael.dicodingstoryapp.data.remote.response.Response as ApiRes
 
 class LoginViewModel(private val pref: UserPreference) : ViewModel() {
 
-    fun register(name: String, email: String, password: String) {
-        val requestBody: RequestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("name", name)
-            .addFormDataPart("email", email)
-            .addFormDataPart("password", password)
-            .build()
-
-        val client = ApiConfig.getApiService().register(requestBody)
-            .enqueue(object : Callback<ApiResponse> {
-                override fun onResponse(
-                    call: Call<ApiResponse>,
-                    response: Response<ApiResponse>
-                ) {
-                    if (response.isSuccessful) {
-                        TODO("Not yet implemented")
-                    } else {
-                        Log.d(TAG, response.message())
-                    }
-                }
-
-                override fun onFailure(
-                    call: Call<ApiResponse>,
-                    t: Throwable
-                ) {
-                    Log.d(TAG, t.message.toString())
-                }
-            })
-    }
-
     fun login(email: String, password: String) {
         val requestBody: RequestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
