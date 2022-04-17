@@ -7,8 +7,6 @@ import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.data.remote.response.LoginResponse
 import com.willyishmael.dicodingstoryapp.data.remote.retrofit.ApiConfig
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,13 +16,13 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
     fun login(email: String, password: String) : Boolean {
         var isLoginSuccess = false
 
-        val requestBody: RequestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("email", email)
-            .addFormDataPart("password", password)
-            .build()
+//        val requestBody: RequestBody = MultipartBody.Builder()
+//            .setType(MultipartBody.FORM)
+//            .addFormDataPart("email", email)
+//            .addFormDataPart("password", password)
+//            .build()
 
-        val client = ApiConfig.getApiService().login(requestBody)
+        val client = ApiConfig.getApiService().login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
@@ -36,7 +34,7 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
                     }
                     isLoginSuccess = true
                 } else {
-                    Log.e(TAG, "Login - onResponse: ${response.body()?.message}")
+                    Log.e(TAG, "Login - onResponse: ${response.message()}")
                 }
             }
 

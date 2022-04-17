@@ -9,14 +9,19 @@ import retrofit2.http.*
 
 interface ApiService {
 
+    @FormUrlEncoded
     @POST("register")
     fun register(
-        @Body requestBody: RequestBody
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String
     ): Call<Response>
 
+    @FormUrlEncoded
     @POST("login")
     fun login(
-        @Body requestBody: RequestBody
+        @Field("email") email: String,
+        @Field("password") password: String
     ): Call<LoginResponse>
 
     @POST("stories")

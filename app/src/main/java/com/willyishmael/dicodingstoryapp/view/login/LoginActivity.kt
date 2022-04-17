@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
+import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -52,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
         binding.apply {
 
             btnRegister.setOnClickListener {
-                moveToMainActivity()
+                moveToRegisterActivity()
             }
 
             btnLogin.setOnClickListener {
@@ -94,13 +95,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun moveToMainActivity() {
-        Intent(this@LoginActivity, RegisterActivity::class.java).apply {
+        Intent(this@LoginActivity, MainActivity::class.java).apply {
             startActivity(this)
         }
     }
 
     private fun moveToRegisterActivity() {
-        Intent(this@LoginActivity, MainActivity::class.java).apply {
+        Intent(this@LoginActivity, RegisterActivity::class.java).apply {
             startActivity(this)
         }
     }
@@ -108,12 +109,12 @@ class LoginActivity : AppCompatActivity() {
     private fun login() {
         val email = binding.etEmail.text.toString()
         val password = binding.etPassword.text.toString()
-        loginViewModel.login(email, password).let { isLoginSuccess ->
-            if (isLoginSuccess) {
-                moveToRegisterActivity()
-            } else {
-                TODO()
-            }
+        val isLoginSuccess = loginViewModel.login(email, password)
+        if (isLoginSuccess) {
+            moveToMainActivity()
+        } else {
+            Toast.makeText(this, "", Toast.LENGTH_LONG).show()
         }
+
     }
 }
