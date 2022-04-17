@@ -4,10 +4,13 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
+import com.willyishmael.dicodingstoryapp.R
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.databinding.ActivityMainBinding
 import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
@@ -25,10 +28,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupViewModel()
+        checkLoginState()
+    }
+
+    /**
+     * Initialize Preference and ViewModel
+     */
+    private fun setupViewModel() {
         val pref = UserPreference.getInstance(dataStore)
         mainViewModel = ViewModelProvider(this, ViewModelFactory(pref))[MainViewModel::class.java]
-
-        checkLoginState()
     }
 
     /**
@@ -43,4 +52,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_on_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_logout -> logout()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun logout() {
+        mainViewModel.logout()
+        moveToLoginActivity()
+    }
+
+    private fun moveToLoginActivity() {
+        Intent(this, LoginActivity::class.java).apply {
+            startActivity(this)
+        }
+    }
+
 }
