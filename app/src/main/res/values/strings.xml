@@ -3,4 +3,11 @@
     <string name="people_talking_image">People talking image</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="email_empty">Email field is empty!</string>
+    <string name="not_valid_email">Not a valid email!</string>
+    <string name="password_empty">Password field is empty</string>
+    <string name="password_too_short">Password must at least 6 character</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="required">Required</string>
 </resources>

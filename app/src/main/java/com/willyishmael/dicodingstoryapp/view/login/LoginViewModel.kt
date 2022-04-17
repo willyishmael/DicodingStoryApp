@@ -15,7 +15,9 @@ import retrofit2.Response
 
 class LoginViewModel(private val pref: UserPreference) : ViewModel() {
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String) : Boolean {
+        var isLoginSuccess = false
+
         val requestBody: RequestBody = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("email", email)
@@ -32,6 +34,7 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
                         pref.saveUserToken(loginResult?.token.toString())
                         pref.saveUserName(loginResult?.name.toString())
                     }
+                    isLoginSuccess = true
                 } else {
                     Log.e(TAG, "Login - onResponse: ${response.body()?.message}")
                 }
@@ -42,6 +45,8 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
             }
 
         })
+
+        return isLoginSuccess
     }
 
     companion object {
