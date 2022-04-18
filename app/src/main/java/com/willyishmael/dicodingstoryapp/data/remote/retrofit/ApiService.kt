@@ -3,6 +3,7 @@ package com.willyishmael.dicodingstoryapp.data.remote.retrofit
 import com.willyishmael.dicodingstoryapp.data.remote.response.GetStoriesResponse
 import com.willyishmael.dicodingstoryapp.data.remote.response.LoginResponse
 import com.willyishmael.dicodingstoryapp.data.remote.response.Response
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -24,11 +25,13 @@ interface ApiService {
         @Field("password") password: String
     ): Call<LoginResponse>
 
+    @Multipart
     @POST("stories")
     @Headers("Content-Type: multipart/form-data")
     fun createStories(
         @Header("Authorization") token: String,
-        @Body requestBody: RequestBody
+        @Part file: MultipartBody.Part,
+        @Part("description") description: RequestBody
     ): Call<Response>
 
     @GET("stories")
