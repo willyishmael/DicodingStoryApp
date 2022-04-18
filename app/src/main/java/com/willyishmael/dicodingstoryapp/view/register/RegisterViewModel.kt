@@ -1,7 +1,9 @@
 package com.willyishmael.dicodingstoryapp.view.register
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.data.remote.response.LoginResponse
@@ -15,15 +17,11 @@ import retrofit2.Callback
 
 class RegisterViewModel(private val pref: UserPreference) : ViewModel() {
 
-    fun register(name: String, email: String, password: String) : Boolean {
-        var isRegisterSuccess = false
+    fun getLoginState() : LiveData<Boolean> {
+        return pref.getLoginState().asLiveData()
+    }
 
-//        val requestBody: RequestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("name", name)
-//            .addFormDataPart("email", email)
-//            .addFormDataPart("password", password)
-//            .build()
+    fun register(name: String, email: String, password: String) {
 
         ApiConfig.getApiService().register(name, email, password)
             .enqueue(object : Callback<Response> {
@@ -31,7 +29,6 @@ class RegisterViewModel(private val pref: UserPreference) : ViewModel() {
                     call: Call<Response>,
                     response: retrofit2.Response<Response>
                 ) {
-                    isRegisterSuccess = true
                     val isError = response.body()?.error
                     val message = response.body()?.message.toString()
                     if (isError == false) {
@@ -48,16 +45,9 @@ class RegisterViewModel(private val pref: UserPreference) : ViewModel() {
                     Log.d(TAG, t.message.toString())
                 }
             })
-        return isRegisterSuccess
     }
 
     private fun login(email: String, password: String) {
-
-//        val requestBody: RequestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("email", email)
-//            .addFormDataPart("password", password)
-//            .build()
 
         val client = ApiConfig.getApiService().login(email, password)
         client.enqueue(object : Callback<LoginResponse> {

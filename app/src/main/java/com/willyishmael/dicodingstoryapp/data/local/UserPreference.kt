@@ -42,7 +42,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
 
     suspend fun saveUserName(name: String) {
         dataStore.edit { pref ->
-            pref[USER_NAME_KEY]
+            pref[USER_NAME_KEY] = name
         }
     }
 

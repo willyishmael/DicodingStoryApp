@@ -1,7 +1,9 @@
 package com.willyishmael.dicodingstoryapp.view.login
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.data.remote.response.LoginResponse
@@ -13,14 +15,11 @@ import retrofit2.Response
 
 class LoginViewModel(private val pref: UserPreference) : ViewModel() {
 
-    fun login(email: String, password: String) : Boolean {
-        var isLoginSuccess = false
+    fun getLoginState() : LiveData<Boolean> {
+        return pref.getLoginState().asLiveData()
+    }
 
-//        val requestBody: RequestBody = MultipartBody.Builder()
-//            .setType(MultipartBody.FORM)
-//            .addFormDataPart("email", email)
-//            .addFormDataPart("password", password)
-//            .build()
+    fun login(email: String, password: String) {
 
         val client = ApiConfig.getApiService().login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
@@ -32,7 +31,6 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
                         pref.saveUserToken(loginResult?.token.toString())
                         pref.saveUserName(loginResult?.name.toString())
                     }
-                    isLoginSuccess = true
                 } else {
                     Log.e(TAG, "Login - onResponse: ${response.message()}")
                 }
@@ -43,8 +41,6 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
             }
 
         })
-
-        return isLoginSuccess
     }
 
     companion object {

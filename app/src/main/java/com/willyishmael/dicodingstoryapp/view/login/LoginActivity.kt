@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
-import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -40,6 +39,10 @@ class LoginActivity : AppCompatActivity() {
     private fun setupViewModel() {
         val pref = UserPreference.getInstance(dataStore)
         loginViewModel = ViewModelProvider(this, ViewModelFactory(pref))[LoginViewModel::class.java]
+
+        loginViewModel.getLoginState().observe(this) { isLogin ->
+            if (isLogin) moveToMainActivity()
+        }
     }
 
     private fun setupViews() {
@@ -109,12 +112,6 @@ class LoginActivity : AppCompatActivity() {
     private fun login() {
         val email = binding.etEmail.text.toString()
         val password = binding.etPassword.text.toString()
-        val isLoginSuccess = loginViewModel.login(email, password)
-        if (isLoginSuccess) {
-            moveToMainActivity()
-        } else {
-            Toast.makeText(this, "", Toast.LENGTH_LONG).show()
-        }
-
+        loginViewModel.login(email, password)
     }
 }

@@ -34,6 +34,10 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupViewModel() {
         val pref = UserPreference.getInstance(dataStore)
         registerViewModel = ViewModelProvider(this, ViewModelFactory(pref))[RegisterViewModel::class.java]
+
+        registerViewModel.getLoginState().observe(this) { isLogin ->
+            if (isLogin) moveToMainActivity()
+        }
     }
 
     private fun setupButtons() {
@@ -81,9 +85,7 @@ class RegisterActivity : AppCompatActivity() {
         val name = binding.etName.text.toString()
         val email = binding.etEmail.text.toString()
         val password = binding.etPassword.text.toString()
-        registerViewModel.register(name, email, password).let { isRegisterSuccess ->
-            if (isRegisterSuccess) moveToMainActivity() else TODO()
-        }
+        registerViewModel.register(name, email, password)
     }
 
     private fun moveToMainActivity() {
