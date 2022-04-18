@@ -8,7 +8,7 @@
     android:background="#EFEFEF">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/iv_story_image"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:adjustViewBounds="false"
@@ -20,23 +20,23 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintTop_toBottomOf="@+id/iv_story_image"
         tools:text="Name" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tv_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:maxLines="2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name"
         tools:text="Description" />
 </androidx.constraintlayout.widget.ConstraintLayout>

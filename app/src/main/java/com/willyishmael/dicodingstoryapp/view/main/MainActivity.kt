@@ -10,10 +10,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.willyishmael.dicodingstoryapp.R
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
+import com.willyishmael.dicodingstoryapp.data.remote.response.ListStoryItem
 import com.willyishmael.dicodingstoryapp.databinding.ActivityMainBinding
 import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
+import com.willyishmael.dicodingstoryapp.view.adapter.ListStoryAdapter
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "current_user")
@@ -30,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         setupViewModel()
         checkLoginState()
+        setupStoryList()
     }
 
     /**
@@ -39,6 +43,17 @@ class MainActivity : AppCompatActivity() {
         val pref = UserPreference.getInstance(dataStore)
         mainViewModel = ViewModelProvider(this, ViewModelFactory(pref))[MainViewModel::class.java]
     }
+
+    private fun setupStoryList() {
+        mainViewModel.getUserToken().observe(this) { mToken ->
+            mainViewModel.getStories(mToken)
+        }
+
+        mainViewModel.listStories.observe(this) { listStory ->
+            setListStory(listStory)
+        }
+    }
+
 
     /**
      * Will direct to Login Activity if loginState is false
@@ -74,6 +89,21 @@ class MainActivity : AppCompatActivity() {
         Intent(this, LoginActivity::class.java).apply {
             startActivity(this)
         }
+    }
+
+    private fun setListStory(listStory: List<ListStoryItem>) {
+        val adapter = ListStoryAdapter(listStory)
+
+        binding.rvStories.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            this.adapter = adapter
+        }
+
+        adapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
+            override fun onItemClicked(story: ListStoryItem) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
 }

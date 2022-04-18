@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.log
 
 class LoginViewModel(private val pref: UserPreference) : ViewModel() {
 
@@ -20,16 +21,20 @@ class LoginViewModel(private val pref: UserPreference) : ViewModel() {
     }
 
     fun login(email: String, password: String) {
+        Log.e("response", "login")
 
         val client = ApiConfig.getApiService().login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                Log.e("response", response.isSuccessful.toString())
                 if (response.isSuccessful) {
                     val loginResult = response.body()?.loginResult
+                    Log.e("response", response.body()?.loginResult?.token.toString())
                     viewModelScope.launch {
                         pref.setLoginState(true)
                         pref.saveUserToken(loginResult?.token.toString())
                         pref.saveUserName(loginResult?.name.toString())
+                        Log.e("response", loginResult?.token.toString())
                     }
                 } else {
                     Log.e(TAG, "Login - onResponse: ${response.message()}")
