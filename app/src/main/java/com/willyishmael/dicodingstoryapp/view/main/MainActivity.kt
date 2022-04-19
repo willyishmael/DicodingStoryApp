@@ -18,6 +18,7 @@ import com.willyishmael.dicodingstoryapp.databinding.ActivityMainBinding
 import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
 import com.willyishmael.dicodingstoryapp.view.adapter.ListStoryAdapter
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
+import com.willyishmael.dicodingstoryapp.view.storydetail.StoryDetailActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "current_user")
 
@@ -101,7 +102,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
             override fun onItemClicked(story: ListStoryItem) {
-                TODO("Not yet implemented")
+                Intent(this@MainActivity, StoryDetailActivity::class.java).apply {
+                    putExtra(StoryDetailActivity.EXTRA_STORY, story)
+                    startActivity(this)
+                }
             }
         })
     }
