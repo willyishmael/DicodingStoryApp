@@ -38,6 +38,25 @@
         <activity
             android:name=".view.main.MainActivity"
             android:exported="false"/>
+        
+        <provider
+            android:authorities="com.willyishmael.dicodingstoryapp"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+    </queries>
+
 
 </manifest>
