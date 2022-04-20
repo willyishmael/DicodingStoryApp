@@ -17,6 +17,7 @@ import com.willyishmael.dicodingstoryapp.data.remote.response.ListStoryItem
 import com.willyishmael.dicodingstoryapp.databinding.ActivityMainBinding
 import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
 import com.willyishmael.dicodingstoryapp.view.adapter.ListStoryAdapter
+import com.willyishmael.dicodingstoryapp.view.createstory.CreateStoryActivity
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
 import com.willyishmael.dicodingstoryapp.view.storydetail.StoryDetailActivity
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         setupViewModel()
         checkLoginState()
+        setupButton()
         setupStoryList()
     }
 
@@ -110,4 +112,15 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun setupButton() {
+        binding.btnCreateStory.setOnClickListener {
+            moveToCreateStoryActivity()
+        }
+    }
+
+    private fun moveToCreateStoryActivity() {
+        Intent(this, CreateStoryActivity::class.java).apply {
+            startActivity(this)
+        }
+    }
 }
