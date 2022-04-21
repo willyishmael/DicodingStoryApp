@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -86,6 +88,7 @@ class MainActivity : AppCompatActivity() {
     private fun logout() {
         mainViewModel.logout()
         moveToLoginActivity()
+        finish()
     }
 
     private fun moveToLoginActivity() {
@@ -106,7 +109,16 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClicked(story: ListStoryItem) {
                 Intent(this@MainActivity, StoryDetailActivity::class.java).apply {
                     putExtra(StoryDetailActivity.EXTRA_STORY, story)
-                    startActivity(this)
+
+                    val optionsCompat: ActivityOptionsCompat =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            this@MainActivity,
+                            Pair(findViewById(R.id.iv_story_image), "transition_story_image"),
+                            Pair(findViewById(R.id.tv_name), "transition_name"),
+                            Pair(findViewById(R.id.tv_description), "transition_description")
+                        )
+
+                    startActivity(this, optionsCompat.toBundle())
                 }
             }
         })
