@@ -27,7 +27,6 @@ interface ApiService {
 
     @Multipart
     @POST("stories")
-    @Headers("Content-Type: multipart/form-data")
     fun createStories(
         @Header("Authorization") token: String,
         @Part file: MultipartBody.Part,

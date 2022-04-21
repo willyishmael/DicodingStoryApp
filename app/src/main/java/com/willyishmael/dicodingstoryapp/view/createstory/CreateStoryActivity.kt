@@ -1,6 +1,7 @@
 package com.willyishmael.dicodingstoryapp.view.createstory
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -13,23 +14,56 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
+import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.databinding.ActivityCreateStoryBinding
 import com.willyishmael.dicodingstoryapp.utils.createFile
 import com.willyishmael.dicodingstoryapp.utils.uriToFile
+import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
+import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
 import java.io.File
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "current_user")
 
 class CreateStoryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateStoryBinding
+    private lateinit var createStoryViewModel: CreateStoryViewModel
     private lateinit var currentPhotoPath: String
 
     private var getFile: File? = null
+    private var userToken: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupViewModel()
+        setupLiveData()
+        requestPermission()
+        setupButtons()
+    }
+
+    private fun setupViewModel() {
+        val pref = UserPreference.getInstance(dataStore)
+        createStoryViewModel = ViewModelProvider(this, ViewModelFactory(pref))[CreateStoryViewModel::class.java]
+    }
+
+    private fun setupLiveData() {
+        createStoryViewModel.getLoginState().observe(this) { loginState ->
+            if (!loginState) moveToLoginActivity()
+        }
+
+        createStoryViewModel.getUserToken().observe(this) { token ->
+            userToken = token
+        }
+    }
+
+    private fun requestPermission() {
         if (!allPermissionGranted()) {
             ActivityCompat.requestPermissions(
                 this,
@@ -37,8 +71,6 @@ class CreateStoryActivity : AppCompatActivity() {
                 REQUEST_CODE_PERMISSIONS
             )
         }
-
-        setupButtons()
     }
 
     private fun setupButtons() {
@@ -74,7 +106,21 @@ class CreateStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadStory() {
-        TODO()
+
+        if (getFile != null) {
+            val file = getFile as File
+            val description = binding.etCaption.text.toString()
+
+            if (userToken.isNotEmpty()) {
+                createStoryViewModel.uploadStory(userToken, file, description)
+            }
+        } else {
+            Toast.makeText(
+                this,
+                "Take picture or choose image from your Gallery first",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private val launcherIntentCamera = registerForActivityResult(
@@ -119,6 +165,13 @@ class CreateStoryActivity : AppCompatActivity() {
 
     private fun allPermissionGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun moveToLoginActivity() {
+        Intent(this, LoginActivity::class.java).apply {
+            startActivity(this)
+        }
+        finish()
     }
 
     companion object {
