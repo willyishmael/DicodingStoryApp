@@ -6,6 +6,7 @@ import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.data.remote.response.GetStoriesResponse
 import com.willyishmael.dicodingstoryapp.data.remote.response.ListStoryItem
 import com.willyishmael.dicodingstoryapp.data.remote.retrofit.ApiConfig
+import com.willyishmael.dicodingstoryapp.utils.Loading
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -14,8 +15,10 @@ import retrofit2.Response
 class MainViewModel (private val pref: UserPreference) : ViewModel() {
 
     private var _listStories = MutableLiveData<List<ListStoryItem>>()
-
     val listStories: LiveData<List<ListStoryItem>> = _listStories
+
+    private var _isLoading = MutableLiveData<Loading>()
+    val isLoading: LiveData<Loading> = _isLoading
 
     fun getUserToken() = pref.getCurrentUserToken().asLiveData()
 
@@ -30,10 +33,10 @@ class MainViewModel (private val pref: UserPreference) : ViewModel() {
     }
 
     fun getStories(token: String) {
-        val bearerToken = "Bearer $token"
-        Log.e("debug token", bearerToken)
-        val client = ApiConfig.getApiService().getStories(bearerToken)
+        _isLoading.value = Loading(true)
 
+        val bearerToken = "Bearer $token"
+        val client = ApiConfig.getApiService().getStories(bearerToken)
         client.enqueue(object : Callback<GetStoriesResponse> {
             override fun onResponse(
                 call: Call<GetStoriesResponse>,
@@ -41,10 +44,26 @@ class MainViewModel (private val pref: UserPreference) : ViewModel() {
             ) {
                 if (response.isSuccessful) {
                     _listStories.value = response.body()?.listStory
+                    _isLoading.value = Loading(
+                        loadingState = false,
+                        isLoadingSuccess = true,
+                        response.message()
+                    )
+                } else {
+                    _isLoading.value = Loading(
+                        loadingState = false,
+                        isLoadingSuccess = false,
+                        response.message()
+                    )
                 }
             }
 
             override fun onFailure(call: Call<GetStoriesResponse>, t: Throwable) {
+                _isLoading.value = Loading(
+                    loadingState = false,
+                    isLoadingSuccess = false,
+                    "Failed to get stories"
+                )
                 Log.d(TAG, "getStories - onFailure${t.message}")
             }
         })

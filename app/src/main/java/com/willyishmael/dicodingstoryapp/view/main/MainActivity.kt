@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.datastore.core.DataStore
@@ -57,6 +59,17 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.listStories.observe(this) { listStory ->
             setListStory(listStory)
         }
+        mainViewModel.isLoading.observe(this) { loading ->
+            setLoadingVisibility(loading.loadingState)
+
+            if (!loading.loadingState && !loading.isLoadingSuccess && loading.message.isNotEmpty()) {
+                Toast.makeText(this, loading.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun setLoadingVisibility(loadingState: Boolean) {
+        binding.progressBar.visibility = if (loadingState) View.VISIBLE else View.GONE
     }
 
 
