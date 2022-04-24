@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -27,6 +28,7 @@ import com.willyishmael.dicodingstoryapp.utils.createTempFile
 import com.willyishmael.dicodingstoryapp.utils.uriToFile
 import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
+import com.willyishmael.dicodingstoryapp.view.main.MainActivity
 import java.io.File
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "current_user")
@@ -59,6 +61,7 @@ class CreateStoryActivity : AppCompatActivity() {
     }
 
     private fun setupLiveData() {
+        createStoryViewModel
         createStoryViewModel.getLoginState().observe(this) { loginState ->
             if (!loginState) moveToLoginActivity()
         }
@@ -66,6 +69,25 @@ class CreateStoryActivity : AppCompatActivity() {
         createStoryViewModel.getUserToken().observe(this) { token ->
             userToken = token
         }
+        createStoryViewModel.isLoading.observe(this) { loading ->
+            setLoadingVisibility(loading.loadingState)
+
+            when {
+                !loading.loadingState && !loading.isLoadingSuccess && loading.message.isNotEmpty() -> {
+                    Toast.makeText(this, loading.message, Toast.LENGTH_LONG).show()
+                }
+                !loading.loadingState && loading.isLoadingSuccess && loading.message.isNotEmpty() -> {
+                    Toast.makeText(this, loading.message, Toast.LENGTH_LONG).show()
+                    moveToMainActivity()
+                }
+            }
+        }
+    }
+
+    private fun setLoadingVisibility(loadingState: Boolean) {
+        binding.progressView.visibility = if (loadingState) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (loadingState) View.VISIBLE else View.GONE
+
     }
 
     private fun requestPermission() {
@@ -174,6 +196,13 @@ class CreateStoryActivity : AppCompatActivity() {
 
     private fun moveToLoginActivity() {
         Intent(this, LoginActivity::class.java).apply {
+            startActivity(this)
+        }
+        finish()
+    }
+
+    private fun moveToMainActivity() {
+        Intent(this, MainActivity::class.java).apply {
             startActivity(this)
         }
         finish()

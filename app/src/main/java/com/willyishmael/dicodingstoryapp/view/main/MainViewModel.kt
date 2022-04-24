@@ -45,9 +45,12 @@ class MainViewModel (private val pref: UserPreference) : ViewModel() {
             }
 
             override fun onFailure(call: Call<GetStoriesResponse>, t: Throwable) {
-                TODO("Not yet implemented")
+                Log.d(TAG, "getStories - onFailure${t.message}")
             }
         })
     }
 
+    companion object {
+        private val TAG = MainViewModel::class.java.simpleName
+    }
 }
