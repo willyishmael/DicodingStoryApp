@@ -23,7 +23,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.databinding.ActivityCreateStoryBinding
-import com.willyishmael.dicodingstoryapp.utils.createFile
+import com.willyishmael.dicodingstoryapp.utils.createTempFile
 import com.willyishmael.dicodingstoryapp.utils.uriToFile
 import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
@@ -90,7 +90,7 @@ class CreateStoryActivity : AppCompatActivity() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
 
-        createFile(application).also { file ->
+        createTempFile(application).also { file ->
             val photoURI: Uri = FileProvider.getUriForFile(
                 this,
                 "com.willyishmael.dicodingstoryapp",
