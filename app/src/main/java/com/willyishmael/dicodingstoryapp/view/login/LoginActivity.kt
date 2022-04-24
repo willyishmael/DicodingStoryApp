@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
+import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -29,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupViewModel()
-        setupViews()
         setupButton()
     }
 
@@ -43,10 +44,19 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.getLoginState().observe(this) { isLogin ->
             if (isLogin) moveToMainActivity()
         }
+
+        loginViewModel.isLoading.observe(this) { loading ->
+            setLoadingVisibility(loading.loadingState)
+
+            if (!loading.loadingState && !loading.isLoadingSuccess && loading.message.isNotEmpty()) {
+                Toast.makeText(this, loading.message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
-    private fun setupViews() {
-
+    private fun setLoadingVisibility(loadingState: Boolean) {
+        binding.progressView.visibility = if (loadingState) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (loadingState) View.VISIBLE else View.GONE
     }
 
     /**
@@ -100,6 +110,7 @@ class LoginActivity : AppCompatActivity() {
     private fun moveToMainActivity() {
         Intent(this@LoginActivity, MainActivity::class.java).apply {
             startActivity(this)
+            finish()
         }
     }
 

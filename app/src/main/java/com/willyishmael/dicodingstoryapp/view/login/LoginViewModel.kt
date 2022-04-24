@@ -1,47 +1,59 @@
 package com.willyishmael.dicodingstoryapp.view.login
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.data.remote.response.LoginResponse
 import com.willyishmael.dicodingstoryapp.data.remote.retrofit.ApiConfig
+import com.willyishmael.dicodingstoryapp.utils.Loading
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.math.log
 
 class LoginViewModel(private val pref: UserPreference) : ViewModel() {
+
+    private var _isLoading = MutableLiveData<Loading>()
+    val isLoading: LiveData<Loading> = _isLoading
 
     fun getLoginState() : LiveData<Boolean> {
         return pref.getLoginState().asLiveData()
     }
 
     fun login(email: String, password: String) {
-        Log.e("response", "login")
+        _isLoading.value = Loading(true)
 
         val client = ApiConfig.getApiService().login(email, password)
         client.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                Log.e("response", response.isSuccessful.toString())
                 if (response.isSuccessful) {
                     val loginResult = response.body()?.loginResult
-                    Log.e("response", response.body()?.loginResult?.token.toString())
                     viewModelScope.launch {
                         pref.setLoginState(true)
                         pref.saveUserToken(loginResult?.token.toString())
                         pref.saveUserName(loginResult?.name.toString())
-                        Log.e("response", loginResult?.token.toString())
                     }
+                    _isLoading.value = Loading(
+                        loadingState = false,
+                        isLoadingSuccess = true,
+                        response.message()
+                    )
                 } else {
-                    Log.e(TAG, "Login - onResponse: ${response.message()}")
+                    _isLoading.value = Loading(
+                        loadingState = false,
+                        isLoadingSuccess = false,
+                        response.message()
+                    )
+                    Log.d(TAG, "Login - onResponse: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                _isLoading.value = Loading(
+                    loadingState = false,
+                    isLoadingSuccess = true,
+                    "Login failed"
+                )
                 Log.e(TAG, "Login - onFailure: ${t.message.toString()}")
             }
 
