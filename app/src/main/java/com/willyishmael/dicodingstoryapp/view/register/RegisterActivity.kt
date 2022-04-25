@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
+import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -36,8 +38,24 @@ class RegisterActivity : AppCompatActivity() {
         registerViewModel = ViewModelProvider(this, ViewModelFactory(pref))[RegisterViewModel::class.java]
 
         registerViewModel.getLoginState().observe(this) { isLogin ->
-            if (isLogin) moveToMainActivity()
+            if (isLogin) {
+                moveToMainActivity()
+                finish()
+            }
         }
+
+        registerViewModel.isLoading.observe(this) { loading ->
+            setLoadingVisibility(loading.loadingState)
+
+            if (!loading.loadingState && !loading.isLoadingSuccess && loading.message.isNotEmpty()) {
+                Toast.makeText(this, loading.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun setLoadingVisibility(loadingState: Boolean) {
+        binding.progressView.visibility = if (loadingState) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (loadingState) View.VISIBLE else View.GONE
     }
 
     private fun setupButtons() {

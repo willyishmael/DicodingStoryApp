@@ -79,9 +79,7 @@ class MainActivity : AppCompatActivity() {
     private fun checkLoginState() {
         mainViewModel.getLoginState().observe(this) { loginState ->
             if (!loginState) {
-                Intent(this@MainActivity, LoginActivity::class.java).apply {
-                    startActivity(this)
-                }
+                moveToLoginActivity()
             }
         }
     }
@@ -100,7 +98,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun logout() {
         mainViewModel.logout()
-        moveToLoginActivity()
         finish()
     }
 
