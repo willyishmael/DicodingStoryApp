@@ -11,7 +11,6 @@ import com.willyishmael.dicodingstoryapp.R
 class PasswordEditText: TextInputEditText {
 
     private fun init() {
-        inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
 
         addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

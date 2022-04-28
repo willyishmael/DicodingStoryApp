@@ -91,7 +91,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
         app:startIconDrawable="@drawable/ic_lock">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.willyishmael.dicodingstoryapp.view.custom.PasswordEditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
