@@ -98,12 +98,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun logout() {
         mainViewModel.logout()
-        finish()
     }
 
     private fun moveToLoginActivity() {
         Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(this)
+            finish()
         }
     }
 

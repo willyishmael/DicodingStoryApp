@@ -1,6 +1,5 @@
 package com.willyishmael.dicodingstoryapp.view
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
