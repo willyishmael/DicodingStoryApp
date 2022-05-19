@@ -9,7 +9,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.willyishmael.dicodingstoryapp.view.maps.databinding.ActivityMapsBinding
+import com.willyishmael.dicodingstoryapp.R
+import com.willyishmael.dicodingstoryapp.databinding.ActivityMapsBinding
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
