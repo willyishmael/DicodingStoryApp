@@ -20,4 +20,6 @@
     <string name="gallery">Gallery</string>
     <string name="image_preview">Image Preview</string>
     <string name="captions">Captions</string>
+    <string name="maps">Maps</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
