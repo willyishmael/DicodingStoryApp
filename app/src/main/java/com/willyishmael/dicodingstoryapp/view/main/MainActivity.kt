@@ -23,6 +23,7 @@ import com.willyishmael.dicodingstoryapp.view.ViewModelFactory
 import com.willyishmael.dicodingstoryapp.view.adapter.ListStoryAdapter
 import com.willyishmael.dicodingstoryapp.view.createstory.CreateStoryActivity
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
+import com.willyishmael.dicodingstoryapp.view.maps.MapsActivity
 import com.willyishmael.dicodingstoryapp.view.storydetail.StoryDetailActivity
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "current_user")
@@ -92,12 +93,19 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_logout -> logout()
+            R.id.menu_maps -> moveToMapsActivity()
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun logout() {
         mainViewModel.logout()
+    }
+
+    private fun moveToMapsActivity() {
+        Intent(this, MapsActivity::class.java).apply {
+            startActivity(this)
+        }
     }
 
     private fun moveToLoginActivity() {
