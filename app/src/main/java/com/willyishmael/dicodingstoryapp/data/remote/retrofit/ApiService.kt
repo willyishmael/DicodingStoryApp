@@ -40,4 +40,12 @@ interface ApiService {
         @Query("size") size: Int? = 10,
         @Query("location") location: Int? = 0
     ): Call<GetStoriesResponse>
+
+    @GET("stories")
+    fun getStoriesWithLocation(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int? = 0,
+        @Query("size") size: Int? = 10,
+        @Query("location") location: Int? = 1
+    ): Call<GetStoriesResponse>
 }

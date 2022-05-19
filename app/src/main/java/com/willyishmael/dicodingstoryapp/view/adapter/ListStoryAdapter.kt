@@ -34,6 +34,7 @@ class ListStoryAdapter(private val listStory: List<ListStoryItem>) : RecyclerVie
 
         holder.binding.apply {
             Glide.with(holder.itemView.context)
+                .asBitmap()
                 .load(story.photoUrl)
                 .into(ivStoryImage)
 

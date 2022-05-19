@@ -6,6 +6,7 @@ import com.willyishmael.dicodingstoryapp.data.local.UserPreference
 import com.willyishmael.dicodingstoryapp.view.createstory.CreateStoryViewModel
 import com.willyishmael.dicodingstoryapp.view.login.LoginViewModel
 import com.willyishmael.dicodingstoryapp.view.main.MainViewModel
+import com.willyishmael.dicodingstoryapp.view.maps.MapsViewModel
 import com.willyishmael.dicodingstoryapp.view.register.RegisterViewModel
 import java.lang.IllegalArgumentException
 
@@ -26,6 +27,9 @@ class ViewModelFactory (private val preference: UserPreference) :
             }
             modelClass.isAssignableFrom(CreateStoryViewModel::class.java) -> {
                 CreateStoryViewModel(preference) as T
+            }
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> {
+                MapsViewModel(preference) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel Class: ${modelClass.name}")
         }
