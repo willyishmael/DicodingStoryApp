@@ -14,6 +14,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.willyishmael.dicodingstoryapp.R
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
@@ -54,7 +55,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupStoryList() {
         mainViewModel.getUserToken().observe(this) { mToken ->
-            mainViewModel.getStories(mToken)
+//            mainViewModel.getStories(mToken)
+            mainViewModel.setTokenValue(mToken)
         }
 
         mainViewModel.listStories.observe(this) { listStory ->
@@ -116,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setListStory(listStory: List<ListStoryItem>) {
+    private fun setListStory(listStory: PagingData<ListStoryItem>) {
         val adapter = ListStoryAdapter(listStory)
 
         binding.rvStories.apply {
