@@ -2,12 +2,15 @@ package com.willyishmael.dicodingstoryapp.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.willyishmael.dicodingstoryapp.data.remote.response.ListStoryItem
 import com.willyishmael.dicodingstoryapp.databinding.ItemStoryBinding
 
-class ListStoryAdapter(private val listStory: List<ListStoryItem>) : RecyclerView.Adapter<ListStoryAdapter.ListViewHolder>() {
+class ListStoryAdapter(
+    private val listStory: List<ListStoryItem>
+    ) : PagingDataAdapter<ListStoryAdapter.ListViewHolder>() {
 
     private lateinit var onItemClickCallback : OnItemClickCallback
 
