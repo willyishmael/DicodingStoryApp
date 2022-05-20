@@ -39,7 +39,7 @@ interface ApiService {
         @Query("page") page: Int? = 0,
         @Query("size") size: Int? = 10,
         @Query("location") location: Int? = 0
-    ): Call<GetStoriesResponse>
+    ): GetStoriesResponse
 
     @GET("stories")
     fun getStoriesWithLocation(
