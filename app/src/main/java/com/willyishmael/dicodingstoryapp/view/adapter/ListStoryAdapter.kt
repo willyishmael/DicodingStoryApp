@@ -2,15 +2,17 @@ package com.willyishmael.dicodingstoryapp.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingData
 import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.willyishmael.dicodingstoryapp.data.remote.response.ListStoryItem
 import com.willyishmael.dicodingstoryapp.databinding.ItemStoryBinding
 
 class ListStoryAdapter(
-    private val listStory: List<ListStoryItem>
-    ) : PagingDataAdapter<ListStoryAdapter.ListViewHolder>() {
+    private val listStory: PagingData<ListStoryItem>
+    ) : PagingDataAdapter<ListStoryItem, ListStoryAdapter.ListViewHolder>(DIFF_CALLBACK) {
 
     private lateinit var onItemClickCallback : OnItemClickCallback
 
@@ -33,16 +35,17 @@ class ListStoryAdapter(
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val story = listStory[position]
+//        val story = listStory[position]
+        val story = getItem(position)
 
         holder.binding.apply {
             Glide.with(holder.itemView.context)
                 .asBitmap()
-                .load(story.photoUrl)
+                .load(story?.photoUrl)
                 .into(ivStoryImage)
 
-            tvName.text = story.name
-            tvDescription.text = story.description
+            tvName.text = story?.name
+            tvDescription.text = story?.description
         }
 
         holder.itemView.setOnClickListener {
@@ -50,5 +53,17 @@ class ListStoryAdapter(
         }
     }
 
-    override fun getItemCount(): Int = listStory.count()
+//    override fun getItemCount(): Int = listStory.count()
+
+    companion object {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryItem>() {
+            override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
+    }
 }

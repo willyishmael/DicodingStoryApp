@@ -3,6 +3,7 @@ package com.willyishmael.dicodingstoryapp.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
+import com.willyishmael.dicodingstoryapp.data.repository.StoryRepository
 import com.willyishmael.dicodingstoryapp.view.createstory.CreateStoryViewModel
 import com.willyishmael.dicodingstoryapp.view.login.LoginViewModel
 import com.willyishmael.dicodingstoryapp.view.main.MainViewModel
@@ -10,7 +11,7 @@ import com.willyishmael.dicodingstoryapp.view.maps.MapsViewModel
 import com.willyishmael.dicodingstoryapp.view.register.RegisterViewModel
 import java.lang.IllegalArgumentException
 
-class ViewModelFactory (private val preference: UserPreference) :
+class ViewModelFactory (private val preference: UserPreference, private val repository: StoryRepository = StoryRepository()) :
     ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
@@ -23,7 +24,7 @@ class ViewModelFactory (private val preference: UserPreference) :
                 RegisterViewModel(preference) as T
             }
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(preference) as T
+                MainViewModel(preference, repository) as T
             }
             modelClass.isAssignableFrom(CreateStoryViewModel::class.java) -> {
                 CreateStoryViewModel(preference) as T

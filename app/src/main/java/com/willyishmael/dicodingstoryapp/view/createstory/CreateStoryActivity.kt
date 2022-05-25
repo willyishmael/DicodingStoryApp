@@ -23,6 +23,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
+import com.willyishmael.dicodingstoryapp.data.repository.StoryRepository
 import com.willyishmael.dicodingstoryapp.databinding.ActivityCreateStoryBinding
 import com.willyishmael.dicodingstoryapp.utils.createTempFile
 import com.willyishmael.dicodingstoryapp.utils.uriToFile
@@ -57,7 +58,8 @@ class CreateStoryActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         val pref = UserPreference.getInstance(dataStore)
-        createStoryViewModel = ViewModelProvider(this, ViewModelFactory(pref))[CreateStoryViewModel::class.java]
+        val repository = StoryRepository()
+        createStoryViewModel = ViewModelProvider(this, ViewModelFactory(pref, repository))[CreateStoryViewModel::class.java]
     }
 
     private fun setupLiveData() {
