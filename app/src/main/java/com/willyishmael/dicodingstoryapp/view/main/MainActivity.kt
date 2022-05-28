@@ -14,7 +14,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.willyishmael.dicodingstoryapp.R
 import com.willyishmael.dicodingstoryapp.data.local.UserPreference
@@ -26,6 +25,7 @@ import com.willyishmael.dicodingstoryapp.view.createstory.CreateStoryActivity
 import com.willyishmael.dicodingstoryapp.view.login.LoginActivity
 import com.willyishmael.dicodingstoryapp.view.maps.MapsActivity
 import com.willyishmael.dicodingstoryapp.view.storydetail.StoryDetailActivity
+import java.lang.NullPointerException
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "current_user")
 
@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainViewModel: MainViewModel
+
+    private lateinit var listStoryAdapter: ListStoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,26 +44,73 @@ class MainActivity : AppCompatActivity() {
         setupViewModel()
         checkLoginState()
         setupButton()
+        setupRecyclerView()
         setupStoryList()
     }
 
-    /**
-     * Initialize Preference and ViewModel
-     */
     private fun setupViewModel() {
         val pref = UserPreference.getInstance(dataStore)
         mainViewModel = ViewModelProvider(this, ViewModelFactory(pref))[MainViewModel::class.java]
     }
 
-    private fun setupStoryList() {
-        mainViewModel.getUserToken().observe(this) { mToken ->
-//            mainViewModel.getStories(mToken)
-            mainViewModel.setTokenValue(mToken)
+    private fun checkLoginState() {
+        mainViewModel.getLoginState().observe(this) { loginState ->
+            if (!loginState) {
+                moveToLoginActivity()
+            }
+        }
+    }
+
+    private fun setupButton() {
+        binding.btnCreateStory.setOnClickListener {
+            moveToCreateStoryActivity()
+        }
+    }
+
+    private fun setupRecyclerView() {
+        listStoryAdapter = ListStoryAdapter()
+
+        listStoryAdapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
+            override fun onItemClicked(story: ListStoryItem) {
+                val optionsCompat: ActivityOptionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        this@MainActivity,
+                        Pair(findViewById(R.id.iv_story_image), "transition_story_image"),
+                        Pair(findViewById(R.id.tv_name), "transition_name"),
+                        Pair(findViewById(R.id.tv_description), "transition_description")
+                    )
+
+                Intent(this@MainActivity, StoryDetailActivity::class.java).apply {
+                    putExtra(StoryDetailActivity.EXTRA_STORY, story)
+                    startActivity(this, optionsCompat.toBundle())
+                }
+            }
+        })
+
+        try {
+            binding.rvStories.apply {
+                adapter = listStoryAdapter
+                layoutManager = LinearLayoutManager(this@MainActivity)
+            }
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
         }
 
-        mainViewModel.listStories.observe(this) { listStory ->
-            setListStory(listStory)
+    }
+
+    private fun setupStoryList() {
+        mainViewModel.getUserToken().observe(this) { mToken ->
+            if (mToken.isNotEmpty()) {
+                getListStory(mToken)
+            }
         }
+    }
+
+    private fun getListStory(token: String) {
+        mainViewModel.getListStories(token).observe(this) { listStory ->
+            listStoryAdapter.submitData(lifecycle, listStory)
+        }
+
         mainViewModel.isLoading.observe(this) { loading ->
             setLoadingVisibility(loading.loadingState)
 
@@ -73,18 +122,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setLoadingVisibility(loadingState: Boolean) {
         binding.progressBar.visibility = if (loadingState) View.VISIBLE else View.GONE
-    }
-
-
-    /**
-     * Will direct to Login Activity if loginState is false
-     */
-    private fun checkLoginState() {
-        mainViewModel.getLoginState().observe(this) { loginState ->
-            if (!loginState) {
-                moveToLoginActivity()
-            }
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -115,39 +152,6 @@ class MainActivity : AppCompatActivity() {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(this)
             finish()
-        }
-    }
-
-    private fun setListStory(listStory: PagingData<ListStoryItem>) {
-        val adapter = ListStoryAdapter(listStory)
-
-        binding.rvStories.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            this.adapter = adapter
-        }
-
-        adapter.setOnItemClickCallback(object : ListStoryAdapter.OnItemClickCallback {
-            override fun onItemClicked(story: ListStoryItem) {
-                Intent(this@MainActivity, StoryDetailActivity::class.java).apply {
-                    putExtra(StoryDetailActivity.EXTRA_STORY, story)
-
-                    val optionsCompat: ActivityOptionsCompat =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            this@MainActivity,
-                            Pair(findViewById(R.id.iv_story_image), "transition_story_image"),
-                            Pair(findViewById(R.id.tv_name), "transition_name"),
-                            Pair(findViewById(R.id.tv_description), "transition_description")
-                        )
-
-                    startActivity(this, optionsCompat.toBundle())
-                }
-            }
-        })
-    }
-
-    private fun setupButton() {
-        binding.btnCreateStory.setOnClickListener {
-            moveToCreateStoryActivity()
         }
     }
 

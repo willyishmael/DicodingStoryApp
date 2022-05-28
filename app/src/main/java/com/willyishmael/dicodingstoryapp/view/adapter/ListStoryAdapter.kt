@@ -2,7 +2,6 @@ package com.willyishmael.dicodingstoryapp.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingData
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -10,9 +9,7 @@ import com.bumptech.glide.Glide
 import com.willyishmael.dicodingstoryapp.data.remote.response.ListStoryItem
 import com.willyishmael.dicodingstoryapp.databinding.ItemStoryBinding
 
-class ListStoryAdapter(
-    private val listStory: PagingData<ListStoryItem>
-    ) : PagingDataAdapter<ListStoryItem, ListStoryAdapter.ListViewHolder>(DIFF_CALLBACK) {
+class ListStoryAdapter : PagingDataAdapter<ListStoryItem, ListStoryAdapter.ListViewHolder>(DIFF_CALLBACK) {
 
     private lateinit var onItemClickCallback : OnItemClickCallback
 
@@ -30,30 +27,33 @@ class ListStoryAdapter(
         parent: ViewGroup,
         viewType: Int
     ): ListViewHolder {
-        val binding = ItemStoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemStoryBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-//        val story = listStory[position]
         val story = getItem(position)
 
-        holder.binding.apply {
-            Glide.with(holder.itemView.context)
-                .asBitmap()
-                .load(story?.photoUrl)
-                .into(ivStoryImage)
+        if (story != null) {
+            holder.binding.apply {
+                Glide.with(holder.itemView.context)
+                    .asBitmap()
+                    .load(story.photoUrl)
+                    .into(ivStoryImage)
 
-            tvName.text = story?.name
-            tvDescription.text = story?.description
-        }
+                tvName.text = story.name
+                tvDescription.text = story.description
+            }
 
-        holder.itemView.setOnClickListener {
-            onItemClickCallback.onItemClicked(listStory[holder.adapterPosition])
+            holder.itemView.setOnClickListener {
+                onItemClickCallback.onItemClicked(story)
+            }
         }
     }
-
-//    override fun getItemCount(): Int = listStory.count()
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ListStoryItem>() {

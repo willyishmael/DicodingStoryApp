@@ -34,10 +34,10 @@ interface ApiService {
     ): Call<Response>
 
     @GET("stories")
-    fun getStories(
+    suspend fun getStories(
         @Header("Authorization") token: String,
         @Query("page") page: Int? = 0,
-        @Query("size") size: Int? = 10,
+        @Query("size") size: Int? = 0,
         @Query("location") location: Int? = 0
     ): GetStoriesResponse
 
